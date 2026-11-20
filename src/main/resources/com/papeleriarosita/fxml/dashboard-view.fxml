@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="rootPane" prefHeight="720.0" prefWidth="1080.0"
+            styleClass="dashboard-root"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.papeleriarosita.controller.DashboardController">
+
+    <!-- =======================================================================
+         ENCABEZADO SUPERIOR (AZUL PETRÓLEO #183D53)
+         ======================================================================= -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
+                <padding>
+                    <Insets bottom="14.0" left="24.0" right="24.0" top="14.0"/>
+                </padding>
+
+                <!-- Identidad visual en cabecera: Símbolo floral, nombre y subtítulo -->
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label text="✿" styleClass="header-flower"/>
+                    <HBox alignment="BASELINE_LEFT" spacing="3.0">
+                        <Label text="Papelería " styleClass="header-title-white"/>
+                        <Label text="Rosita" styleClass="header-title-pink"/>
+                    </HBox>
+                    <Separator orientation="VERTICAL" styleClass="header-separator"/>
+                    <Label text="Papelería y variedades" styleClass="header-subtitle"/>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Datos de sesión del usuario autenticado y fecha actual -->
+                <HBox alignment="CENTER_RIGHT" spacing="14.0">
+                    <Label fx:id="lblHeaderDate" text="📅 Fecha actual" styleClass="header-date-badge"/>
+                    <HBox alignment="CENTER" spacing="8.0" styleClass="header-user-badge">
+                        <Label text="👤" styleClass="header-user-icon"/>
+                        <Label fx:id="lblHeaderGreeting" text="¡Hola, Rosita! – Administradora" styleClass="header-user-name"/>
+                    </HBox>
+                </HBox>
+            </HBox>
+
+            <!-- Banner Permanente de Modo Vista Previa Visual -->
+            <HBox fx:id="bannerVistaPrevia" alignment="CENTER" spacing="12.0" visible="false" managed="false"
+                  style="-fx-background-color: #FEF3C7; -fx-padding: 8px 16px; -fx-border-color: #F59E0B; -fx-border-width: 0 0 2px 0;">
+                <Label text="⚠️" style="-fx-font-size: 15px; -fx-text-fill: #92400E;"/>
+                <Label text="MODO DE VISTA PREVIA (SOLO LECTURA) – Navegación visual habilitada sin conexión a MySQL. No se modifican ni guardan datos reales."
+                       style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #92400E;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- =======================================================================
+         BARRA LATERAL AZUL PETRÓLEO (NAVEGACIÓN LIMPIA: INICIO, CONFIGURACIÓN Y SALIR)
+         ======================================================================= -->
+    <left>
+        <VBox prefWidth="230.0" spacing="10.0" styleClass="sidebar-menu">
+            <padding>
+                <Insets bottom="20.0" left="14.0" right="14.0" top="20.0"/>
+            </padding>
+
+            <Label text="MENÚ" styleClass="sidebar-category-label"/>
+
+            <!-- 1. Inicio -->
+            <Button fx:id="btnNavInicio" maxWidth="Infinity" onAction="#onNavInicioClick"
+                    styleClass="sidebar-btn, sidebar-btn-active" text="  🏠  Inicio"/>
+
+            <!-- Espacio flexible hacia abajo -->
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Separator styleClass="sidebar-separator"/>
+
+            <!-- 2. Configuración -->
+            <Button fx:id="btnNavConfig" maxWidth="Infinity" onAction="#onNavConfigClick"
+                    styleClass="sidebar-btn" text="  ⚙️  Configuración"/>
+
+            <!-- 3. Cerrar sesión -->
+            <Button fx:id="btnNavLogout" maxWidth="Infinity" onAction="#onNavLogoutClick"
+                    styleClass="sidebar-btn, sidebar-btn-logout" text="  🚪  Cerrar sesión"/>
+        </VBox>
+    </left>
+
+    <!-- =======================================================================
+         ÁREA PRINCIPAL DE CONTENIDO
+         ======================================================================= -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="main-scroll-pane">
+            <StackPane fx:id="contentArea" styleClass="main-content-stack">
+
+                <!-- ===========================================================
+                     VISTA 1: INICIO CON LOS 7 MÓDULOS DE FORMA DIRECTA Y CÁLIDA
+                     =========================================================== -->
+                <VBox fx:id="homeView" spacing="26.0" styleClass="view-container">
+                    <padding>
+                        <Insets bottom="36.0" left="36.0" right="36.0" top="30.0"/>
+                    </padding>
+
+                    <!-- Tarjeta de bienvenida accesible -->
+                    <VBox spacing="6.0" styleClass="welcome-card">
+                        <Label fx:id="lblWelcomeGreeting" text="¡Hola, Rosita!" styleClass="welcome-title"/>
+                        <Label text="¿Qué deseas hacer hoy? Elige uno de los módulos para comenzar." styleClass="welcome-subtitle"/>
+                    </VBox>
+
+                    <!-- Sección de Módulos: Nombres sencillos, botones grandes y letras claras -->
+                    <VBox spacing="16.0">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="Módulos de la Papelería" styleClass="section-main-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="✿ Papelería Rosita" styleClass="badge-system-info"/>
+                        </HBox>
+
+                        <GridPane hgap="20.0" vgap="20.0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="145.0" vgrow="ALWAYS"/>
+                                <RowConstraints minHeight="145.0" vgrow="ALWAYS"/>
+                            </rowConstraints>
+
+                            <!-- 1. VENTAS -->
+                            <Button onAction="#onOpenVentas" styleClass="module-direct-btn, btn-modulo-ventas"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="✿" styleClass="module-direct-icon, icon-ventas"/>
+                                        <Label text="Ventas" styleClass="module-direct-title, title-ventas"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 2. INVENTARIO -->
+                            <Button onAction="#onOpenInventario" styleClass="module-direct-btn, btn-modulo-inventario"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="📦" styleClass="module-direct-icon, icon-inventario"/>
+                                        <Label text="Inventario" styleClass="module-direct-title, title-inventario"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 3. PRODUCTOS -->
+                            <Button onAction="#onOpenProductos" styleClass="module-direct-btn, btn-modulo-productos"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="📋" styleClass="module-direct-icon, icon-productos"/>
+                                        <Label text="Productos" styleClass="module-direct-title, title-productos"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 4. PROVEEDORES -->
+                            <Button onAction="#onOpenProveedores" styleClass="module-direct-btn, btn-modulo-proveedores"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="🤝" styleClass="module-direct-icon, icon-proveedores"/>
+                                        <Label text="Proveedores" styleClass="module-direct-title, title-proveedores"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 5. COMPRAS -->
+                            <Button onAction="#onOpenCompras" styleClass="module-direct-btn, btn-modulo-compras"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="🛒" styleClass="module-direct-icon, icon-compras"/>
+                                        <Label text="Compras" styleClass="module-direct-title, title-compras"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 6. CAJA -->
+                            <Button onAction="#onOpenCaja" styleClass="module-direct-btn, btn-modulo-caja"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="💵" styleClass="module-direct-icon, icon-caja"/>
+                                        <Label text="Caja" styleClass="module-direct-title, title-caja"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 7. REPORTES -->
+                            <Button onAction="#onOpenReportes" styleClass="module-direct-btn, btn-modulo-reportes"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="📊" styleClass="module-direct-icon, icon-reportes"/>
+                                        <Label text="Reportes" styleClass="module-direct-title, title-reportes"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+
+                            <!-- 8. CONFIGURACIÓN (Acceso directo desde Inicio) -->
+                            <Button onAction="#onNavConfigClick" styleClass="module-direct-btn, btn-modulo-config"
+                                    maxWidth="Infinity" prefHeight="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                <graphic>
+                                    <VBox alignment="CENTER" spacing="10.0">
+                                        <Label text="⚙️" styleClass="module-direct-icon, icon-config"/>
+                                        <Label text="Configuración" styleClass="module-direct-title, title-config"/>
+                                    </VBox>
+                                </graphic>
+                            </Button>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+
+                <!-- ===========================================================
+                     VISTA 2: DETALLE INFORMATIVO DE MÓDULO AUXILIAR
+                     =========================================================== -->
+                <VBox fx:id="moduleView" spacing="22.0" styleClass="view-container" visible="false" managed="false">
+                    <padding>
+                        <Insets bottom="32.0" left="32.0" right="32.0" top="28.0"/>
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Button onAction="#onNavInicioClick" text="← Volver al Inicio" styleClass="btn-secondary"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button onAction="#onOpenInventario" text="📦 Ver Inventario" styleClass="btn-primary, btn-primary-inventario"/>
+                        <Button onAction="#onOpenProductos" text="📋 Ver Productos" styleClass="btn-primary, btn-primary-productos"/>
+                    </HBox>
+
+                    <VBox spacing="20.0" styleClass="module-detail-card">
+                        <HBox alignment="CENTER_LEFT" spacing="18.0">
+                            <Label fx:id="lblModuleIcon" text="✿" styleClass="module-detail-icon"/>
+                            <VBox spacing="4.0">
+                                <Label fx:id="lblModuleName" text="Nombre del Módulo" styleClass="module-detail-title"/>
+                                <Label fx:id="lblModuleStatus" text="Información general" styleClass="module-detail-badge"/>
+                            </VBox>
+                        </HBox>
+
+                        <Separator/>
+
+                        <VBox spacing="10.0">
+                            <Label text="Propósito y alcance del módulo:" styleClass="field-label"/>
+                            <Label fx:id="lblModuleDescription" text="Descripción detallada de las actividades que se realizarán en este módulo."
+                                   styleClass="module-detail-desc" wrapText="true"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+
+                <!-- ===========================================================
+                     VISTA 3: CONFIGURACIÓN Y ADMINISTRACIÓN DE USUARIOS
+                     =========================================================== -->
+                <VBox fx:id="configView" spacing="24.0" styleClass="view-container" visible="false" managed="false">
+                    <padding>
+                        <Insets bottom="32.0" left="32.0" right="32.0" top="28.0"/>
+                    </padding>
+
+                    <!-- Banner de Rol y Permisos de Acceso -->
+                    <HBox fx:id="configBannerBox" alignment="CENTER_LEFT" spacing="14.0" styleClass="role-permission-banner">
+                        <Label fx:id="lblConfigBannerIcon" text="👑" styleClass="banner-role-icon"/>
+                        <VBox spacing="2.0">
+                            <Label fx:id="lblConfigPermissionBanner" text="Control Total del Sistema – Perfil Administradora (Rosita)"
+                                   styleClass="banner-role-title"/>
+                            <Label text="Las restricciones de perfil se aplican automáticamente según el usuario autenticado."
+                                   styleClass="banner-role-subtitle"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Botón para regresar al Inicio -->
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Button onAction="#onNavInicioClick" text="← Volver al Inicio" styleClass="btn-secondary"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Ajustes y Personalización del Sistema" styleClass="section-main-title"/>
+                    </HBox>
+
+                    <!-- Sección 1: Datos Generales del Negocio -->
+                    <VBox spacing="14.0" styleClass="config-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="🏪" styleClass="card-icon-emoji"/>
+                            <Label text="Datos Generales del Negocio" styleClass="form-card-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblLockNegocio" text="🔒 Solo Administradora" styleClass="lock-badge" visible="false" managed="false"/>
+                        </HBox>
+                        <Separator/>
+
+                        <GridPane hgap="16.0" vgap="14.0">
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="180.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints/>
+                                <RowConstraints/>
+                                <RowConstraints/>
+                            </rowConstraints>
+
+                            <Label text="Nombre Comercial:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtNegocioNombre" text="Papelería Rosita" styleClass="text-input-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Dirección física:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <TextField fx:id="txtNegocioDireccion" text="Calle Principal # 12-34, Barrio Centro" styleClass="text-input-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Teléfono / WhatsApp:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <TextField fx:id="txtNegocioTelefono" text="+57 312 345 6789" styleClass="text-input-field" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Sección 2: Accesibilidad y Legibilidad Visual -->
+                    <VBox spacing="14.0" styleClass="config-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="👁️" styleClass="card-icon-emoji"/>
+                            <Label text="Accesibilidad y Comodidad Visual (Para Rosita)" styleClass="form-card-title"/>
+                        </HBox>
+                        <Separator/>
+
+                        <GridPane hgap="16.0" vgap="14.0">
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="180.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints/>
+                                <RowConstraints/>
+                                <RowConstraints/>
+                            </rowConstraints>
+
+                            <Label text="Tamaño de letra:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <ComboBox fx:id="cmbFontSize" prefWidth="240.0" styleClass="combo-box-custom" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Alto contraste:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <CheckBox fx:id="chkHighContrast" text="Activar modo de alto contraste para lectura fácil en pantalla"
+                                      styleClass="check-box-custom" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Animaciones:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <CheckBox fx:id="chkAnimations" selected="true" text="Habilitar transiciones suaves entre vistas"
+                                      styleClass="check-box-custom" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Sección 3: Cuentas de Acceso y Gestión de Empleadas -->
+                    <VBox spacing="14.0" styleClass="config-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="👥" styleClass="card-icon-emoji"/>
+                            <Label text="Gestión de Empleadas y Permisos" styleClass="form-card-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblLockUsuarios" text="🔒 Solo Administradora" styleClass="lock-badge" visible="false" managed="false"/>
+                        </HBox>
+                        <Separator/>
+
+                        <Label text="Administre los usuarios que tienen acceso al sistema (Gladys - Empleada):" styleClass="section-desc-text"/>
+
+                        <HBox spacing="12.0" alignment="CENTER_LEFT">
+                            <Button fx:id="btnRegistrarEmpleado" onAction="#onRegistrarEmpleadoClick"
+                                    text="➕ Registrar Nueva Empleada (Gladys)" styleClass="btn-primary-action"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Sección 4: Copias de Seguridad y Respaldo de Base de Datos -->
+                    <VBox spacing="14.0" styleClass="config-card">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="💾" styleClass="card-icon-emoji"/>
+                            <Label text="Copia de Seguridad de la Base de Datos" styleClass="form-card-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblLockBackup" text="🔒 Solo Administradora" styleClass="lock-badge" visible="false" managed="false"/>
+                        </HBox>
+                        <Separator/>
+
+                        <Label text="Genere una copia de seguridad local de toda la información (ventas, stock, inventario y productos):" styleClass="section-desc-text"/>
+
+                        <HBox spacing="12.0" alignment="CENTER_LEFT">
+                            <Button fx:id="btnBackup" onAction="#onGenerarCopiaClick"
+                                    text="📦 Generar Respaldo Local (Backup)" styleClass="btn-secondary"/>
+                            <Label fx:id="lblBackupMessage" text="" styleClass="backup-success-label" visible="false" managed="false"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+            </StackPane>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

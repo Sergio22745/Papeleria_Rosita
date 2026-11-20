@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.papeleriarosita.controller.MainController"
+           styleClass="root-pane">
+
+    <!-- Panel central blanco con sombra suave y diseño accesible -->
+    <VBox alignment="CENTER" maxWidth="460.0" spacing="22.0" styleClass="login-card">
+        <padding>
+            <Insets bottom="40.0" left="36.0" right="36.0" top="40.0"/>
+        </padding>
+
+        <!-- Identidad visual oficial: Símbolo floral ✿, Nombre Rosita, Subtítulo -->
+        <VBox alignment="CENTER" spacing="6.0">
+            <Label text="✿" styleClass="flower-icon"/>
+            <HBox alignment="CENTER" spacing="6.0">
+                <Label text="Papelería " styleClass="title-papeleria"/>
+                <Label text="Rosita" styleClass="title-rosita"/>
+            </HBox>
+            <Label text="Papelería y variedades" styleClass="subtitle-label"/>
+        </VBox>
+
+        <!-- Campo de Correo Electrónico -->
+        <VBox spacing="8.0" maxWidth="Infinity">
+            <Label text="Correo electrónico" styleClass="field-label"/>
+            <HBox styleClass="input-box" alignment="CENTER_LEFT">
+                <TextField fx:id="emailField" promptText="Ingresa tu correo electrónico (ej. rosita@papeleriarosita.com)"
+                           onAction="#onLoginButtonClick" styleClass="text-input-field" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </VBox>
+
+        <!-- Campo de Contraseña con botón amplio para mostrar u ocultar -->
+        <VBox spacing="8.0" maxWidth="Infinity">
+            <Label text="Contraseña de acceso" styleClass="field-label"/>
+            <HBox styleClass="password-box" alignment="CENTER_LEFT">
+                <StackPane HBox.hgrow="ALWAYS">
+                    <PasswordField fx:id="passwordField" promptText="Ingresa tu contraseña de acceso"
+                                   onAction="#onLoginButtonClick" styleClass="password-input"/>
+                    <TextField fx:id="passwordTextField" promptText="Ingresa tu contraseña de acceso"
+                               onAction="#onLoginButtonClick" styleClass="password-input" visible="false"/>
+                </StackPane>
+                <Button fx:id="btnTogglePassword" text="👁 Mostrar" onAction="#onTogglePasswordVisibility"
+                        styleClass="toggle-eye-btn" focusTraversable="false"/>
+            </HBox>
+        </VBox>
+
+        <!-- Botón principal para iniciar sesión -->
+        <Button fx:id="btnLogin" text="INICIAR SESIÓN" onAction="#onLoginButtonClick"
+                styleClass="login-button" maxWidth="Infinity"/>
+
+        <!-- Enlace para Configuración Inicial de primera cuenta (visible solo si no hay usuarios) -->
+        <Hyperlink fx:id="linkSetupInicial" text="⚙ Configuración inicial: Registrar Administradora"
+                   onAction="#onIrASetupInicial" styleClass="setup-hyperlink"/>
+
+        <!-- Separador para sección de Vista Previa -->
+        <Separator style="-fx-opacity: 0.6;"/>
+
+        <!-- Sección de Modo de Vista Previa (Sin conexión a MySQL / Solo Lectura) -->
+        <VBox alignment="CENTER" spacing="8.0" maxWidth="Infinity">
+            <Label text="Modo de Inspección Visual (Sin conexión a MySQL):"
+                   style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+            <HBox spacing="8.0" alignment="CENTER">
+                <Button fx:id="btnVistaPreviaAdmin" text="👁️ Vista Previa: Rosita (Admin)"
+                        onAction="#onVistaPreviaAdmin" styleClass="btn-secondary-light" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                        style="-fx-font-size: 11px; -fx-padding: 6px 10px;"/>
+                <Button fx:id="btnVistaPreviaEmpleada" text="👁️ Vista Previa: Gladys (Empleada)"
+                        onAction="#onVistaPreviaEmpleada" styleClass="btn-secondary-light" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                        style="-fx-font-size: 11px; -fx-padding: 6px 10px;"/>
+            </HBox>
+            <Label text="Permite recorrer todas las pantallas en modo solo lectura sin modificar datos."
+                   style="-fx-font-size: 10px; -fx-text-fill: #94A3B8;" wrapText="true" textAlignment="CENTER"/>
+        </VBox>
+
+        <!-- Mensajes de validación claros y legibles -->
+        <Label fx:id="messageLabel" styleClass="message-label" wrapText="true"
+               maxWidth="Infinity" visible="false" managed="false"/>
+    </VBox>
+</StackPane>

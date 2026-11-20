@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="rootStackPane" styleClass="view-container"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.papeleriarosita.controller.CajaController">
+
+    <VBox spacing="14.0">
+        <padding>
+            <Insets bottom="18.0" left="22.0" right="22.0" top="16.0"/>
+        </padding>
+
+        <!-- Encabezado del Módulo (Identidad Azul Petróleo #183D53) -->
+        <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="module-header-box">
+            <Label text="💵" style="-fx-font-size: 26px; -fx-text-fill: #183D53;"/>
+            <VBox spacing="2.0">
+                <Label text="Control de Caja y Cuadre de Mostrador" styleClass="module-header-title" style="-fx-text-fill: #183D53;"/>
+                <Label text="Arqueo de ingresos diarios, separación por métodos de pago y conciliación de efectivo para Rosita y Gladys."
+                       styleClass="section-desc-text"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Badges de cabecera -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Label fx:id="lblHeaderTotalBadge" text="Total: $ 0,00" styleClass="header-date-badge"/>
+                <Label fx:id="lblHeaderEfectivoBadge" text="Efectivo: $ 0,00" styleClass="badge-metodo-efectivo"/>
+                <Label fx:id="lblHeaderUsuarioBadge" text="Usuario: -" styleClass="role-tag-employee"/>
+            </HBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Barra de Filtros y Rango de Fechas -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="toolbar-box">
+            <Label text="Desde:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+            <DatePicker fx:id="dpFechaDesde" prefWidth="135.0" promptText="dd/mm/aaaa"/>
+            <Label text="Hasta:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+            <DatePicker fx:id="dpFechaHasta" prefWidth="135.0" promptText="dd/mm/aaaa"/>
+            <ComboBox fx:id="cmbFiltroUsuario" promptText="Todos los usuarios" prefWidth="180.0" styleClass="combo-box-custom"/>
+            <ComboBox fx:id="cmbFiltroMetodo" promptText="Todos los métodos" prefWidth="170.0" styleClass="combo-box-custom"/>
+            <Button text="🔍 Consultar" onAction="#onConsultarCaja" styleClass="btn-primary-caja"/>
+            <Button text="📅 Hoy" onAction="#onConsultarHoy" styleClass="btn-secondary-light"/>
+            <Button text="✖ Limpiar" onAction="#onLimpiarFiltros" styleClass="btn-secondary-light"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🔄 Actualizar" onAction="#onConsultarCaja" styleClass="btn-secondary-light"/>
+        </HBox>
+
+        <!-- Tarjetas Métricas KPI de Caja (Separación por Métodos de Pago) -->
+        <HBox spacing="14.0">
+            <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                <Label text="TOTAL RECAUDADO (VENTAS)" styleClass="kpi-title"/>
+                <Label fx:id="lblKpiTotalRecaudado" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #183D53;"/>
+                <Label fx:id="lblKpiTransacciones" text="0 transacciones activas" styleClass="kpi-subtitle"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                <Label text="VENTAS EN EFECTIVO" styleClass="kpi-title"/>
+                <Label fx:id="lblKpiEfectivo" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #087E70;"/>
+                <Label text="Dinero físico generado en mostrador" styleClass="kpi-subtitle"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                <Label text="TRANSFERENCIAS BANCARIAS" styleClass="kpi-title"/>
+                <Label fx:id="lblKpiTransferencias" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #385DB1;"/>
+                <Label text="Depósitos bancarios y billeteras móviles" styleClass="kpi-subtitle"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                <Label text="PAGOS CON TARJETA" styleClass="kpi-title"/>
+                <Label fx:id="lblKpiTarjetas" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #A8750C;"/>
+                <Label text="Cobros mediante datáfono / POS" styleClass="kpi-subtitle"/>
+            </VBox>
+        </HBox>
+
+        <!-- Panel de Arqueo y Conciliación de Efectivo (Cuadre de Turno) -->
+        <VBox spacing="10.0" styleClass="arqueo-panel-card">
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label text="⚖️ Arqueo y Conciliación de Efectivo (Cuadre de Turno)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblBadgeEstadoArqueo" text="✓ Cuadre Exacto" styleClass="badge-arqueo-ok"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="16.0">
+                <VBox spacing="3.0">
+                    <Label text="Base de Apertura (Fondo):" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <TextField fx:id="txtBaseApertura" promptText="0" text="50000" prefWidth="130.0" styleClass="text-input-field" style="-fx-alignment: CENTER-RIGHT;"/>
+                </VBox>
+                <Label text="+" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #64748B;"/>
+                <VBox spacing="3.0">
+                    <Label text="Ventas en Efectivo:" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <Label fx:id="lblArqueoVentasEfectivo" text="\$ 0,00" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #087E70; -fx-padding: 6px 0;"/>
+                </VBox>
+                <Label text="=" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #64748B;"/>
+                <VBox spacing="3.0">
+                    <Label text="Efectivo Esperado en Cajón:" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <Label fx:id="lblEfectivoEsperado" text="\$ 50.000,00" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #183D53; -fx-padding: 6px 0;"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox spacing="3.0">
+                    <Label text="Dinero Físico Contado:" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <TextField fx:id="txtDineroContado" promptText="0" text="50000" prefWidth="140.0" styleClass="text-input-field" style="-fx-alignment: CENTER-RIGHT; -fx-font-weight: bold;"/>
+                </VBox>
+                <VBox spacing="3.0">
+                    <Label text="Diferencia de Arqueo:" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <Label fx:id="lblDiferenciaCalculada" text="\$ 0,00" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #087E70; -fx-padding: 6px 0;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnGenerarActaArqueo" text="📝 Registrar Arqueo de Turno" onAction="#onRegistrarArqueoTurno" styleClass="btn-primary-caja"/>
+            </HBox>
+        </VBox>
+
+        <!-- SplitPane Maestro-Detalle: Ventas y Artículos -->
+        <SplitPane dividerPositions="0.6" orientation="VERTICAL" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <!-- Tabla Superior: Ventas que Conforman el Cuadre -->
+            <VBox spacing="6.0" styleClass="movements-panel-card">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="📋 Ventas Registradas en el Período (Excluye Anuladas)" styleClass="movements-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="Seleccione una venta para auditar sus artículos individuales" style="-fx-font-size: 12px; -fx-text-fill: #64748B;"/>
+                </HBox>
+                <TableView fx:id="tblVentasCaja" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIdVenta" text="N° Venta" prefWidth="85.0"/>
+                        <TableColumn fx:id="colFecha" text="Fecha y Hora" prefWidth="140.0"/>
+                        <TableColumn fx:id="colUsuario" text="Responsable (Cajera)" prefWidth="160.0"/>
+                        <TableColumn fx:id="colCliente" text="Cliente" prefWidth="170.0"/>
+                        <TableColumn fx:id="colMetodoPago" text="Método de Pago" prefWidth="130.0"/>
+                        <TableColumn fx:id="colArticulos" text="Artículos" prefWidth="90.0"/>
+                        <TableColumn fx:id="colTotal" text="Total ($)" prefWidth="130.0"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="110.0"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No hay ventas registradas para el período y filtros seleccionados." styleClass="table-empty-label"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+
+            <!-- Tabla Inferior: Detalle de Artículos de la Venta Seleccionada -->
+            <VBox spacing="6.0" styleClass="movements-panel-card">
+                <Label fx:id="lblTituloDetalleVenta" text="📦 Artículos de la Venta Seleccionada" styleClass="movements-panel-title"/>
+                <TableView fx:id="tblDetallesVentaCaja" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colDetCodigo" text="Código" prefWidth="110.0"/>
+                        <TableColumn fx:id="colDetProducto" text="Producto" prefWidth="280.0"/>
+                        <TableColumn fx:id="colDetCantidad" text="Cantidad Vendida" prefWidth="130.0"/>
+                        <TableColumn fx:id="colDetPrecioUnitario" text="Precio Unitario ($)" prefWidth="140.0"/>
+                        <TableColumn fx:id="colDetSubtotal" text="Subtotal ($)" prefWidth="140.0"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="Seleccione una venta arriba para inspeccionar sus productos y precios de mostrador." styleClass="table-empty-label"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </VBox>
+</StackPane>

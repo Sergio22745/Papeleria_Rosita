@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="rootStackPane" styleClass="view-container"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.papeleriarosita.controller.ComprasController">
+
+    <!-- VISTA PRINCIPAL: LISTADO Y DETALLES -->
+    <VBox fx:id="mainContainer" spacing="16.0">
+        <padding>
+            <Insets bottom="20.0" left="24.0" right="24.0" top="18.0"/>
+        </padding>
+
+        <!-- Encabezado del Módulo (Identidad Terracota / Naranja Óxido #CA5733) -->
+        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="module-header-box">
+            <Label text="🛒" style="-fx-font-size: 26px; -fx-text-fill: #CA5733;"/>
+            <VBox spacing="3.0">
+                <Label text="Compras y Abastecimiento" styleClass="module-header-title" style="-fx-text-fill: #CA5733;"/>
+                <Label text="Gestión de pedidos a proveedores, seguimiento de entregas y recepción física en bodega"
+                       styleClass="section-desc-text"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Badges de métricas -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Label fx:id="lblTotalCompras" text="Órdenes: 0" styleClass="header-date-badge"/>
+                <Label fx:id="lblTotalPendientes" text="Pendientes: 0" styleClass="badge-estado-registrada"/>
+                <Label fx:id="lblTotalParciales" text="Parciales: 0" styleClass="badge-estado-parcial"/>
+                <Label fx:id="lblTotalRecibidas" text="Recibidas: 0" styleClass="badge-estado-recibida"/>
+            </HBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Barra de Filtros y Acciones -->
+        <VBox spacing="10.0" styleClass="toolbar-box">
+            <!-- Fila 1: Filtros de búsqueda -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label text="Filtrar por:" style="-fx-font-weight: bold; -fx-text-fill: #183D53; -fx-font-size: 13px;"/>
+                <ComboBox fx:id="cmbFiltroProveedor" promptText="Todos los proveedores" prefWidth="220.0" styleClass="combo-box-custom"/>
+                <ComboBox fx:id="cmbFiltroEstado" promptText="Estado" prefWidth="150.0" styleClass="combo-box-custom"/>
+                <Label text="Desde:" style="-fx-font-size: 12px; -fx-text-fill: #64748B;"/>
+                <DatePicker fx:id="dpFiltroFechaDesde" prefWidth="135.0" promptText="dd/mm/aaaa"/>
+                <Label text="Hasta:" style="-fx-font-size: 12px; -fx-text-fill: #64748B;"/>
+                <DatePicker fx:id="dpFiltroFechaHasta" prefWidth="135.0" promptText="dd/mm/aaaa"/>
+                <Button text="🔍 Filtrar" onAction="#onFiltrar" styleClass="btn-secondary"/>
+                <Button text="✖ Limpiar" onAction="#onLimpiarFiltros" styleClass="btn-secondary-light"/>
+            </HBox>
+
+            <!-- Fila 2: Acciones operativas -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Button fx:id="btnNuevaCompra" text="➕ Nueva Orden de Compra" onAction="#onAbrirNuevaCompra"
+                        styleClass="btn-primary-compras"/>
+                <Button fx:id="btnRegistrarRecepcion" text="📦 Registrar Recepción Física" onAction="#onAbrirRecepcion"
+                        disable="true" styleClass="btn-secondary-recepcion"/>
+                <Button fx:id="btnAnularCompra" text="❌ Anular Orden" onAction="#onAnularCompra"
+                        disable="true" styleClass="btn-danger-outline"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 Actualizar" onAction="#cargarCompras" styleClass="btn-secondary-light"/>
+            </HBox>
+        </VBox>
+
+        <!-- Contenedor Maestro-Detalle -->
+        <SplitPane dividerPositions="0.55" orientation="VERTICAL" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <!-- Panel Superior: Listado Maestro de Compras -->
+            <VBox spacing="8.0" styleClass="movements-panel-card">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="📋 Historial de Órdenes de Compra" styleClass="movements-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="Seleccione una orden para inspeccionar su detalle y recepciones" style="-fx-font-size: 12px; -fx-text-fill: #64748B;"/>
+                </HBox>
+                <TableView fx:id="tblCompras" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIdCompra" text="N° Orden" prefWidth="85.0"/>
+                        <TableColumn fx:id="colFechaCompra" text="Fecha y Hora" prefWidth="140.0"/>
+                        <TableColumn fx:id="colProveedor" text="Proveedor" prefWidth="220.0"/>
+                        <TableColumn fx:id="colUsuario" text="Responsable" prefWidth="150.0"/>
+                        <TableColumn fx:id="colTotal" text="Total ($)" prefWidth="130.0"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="130.0"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No hay órdenes de compra registradas con los filtros seleccionados." styleClass="table-empty-label"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+
+            <!-- Panel Inferior: Detalle de Ítems y Recepciones de la Compra Seleccionada -->
+            <VBox spacing="8.0" styleClass="movements-panel-card">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label fx:id="lblTituloDetalle" text="📦 Detalle de la Orden Seleccionada" styleClass="movements-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <HBox fx:id="boxMetricasDetalle" spacing="10.0" alignment="CENTER_RIGHT" visible="false">
+                        <Label fx:id="lblDetSolicitadas" text="Solicitado: 0" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                        <Label fx:id="lblDetRecibidas" text="Recibido: 0" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #087E70;"/>
+                        <Label fx:id="lblDetPendientes" text="Pendiente: 0" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #CA5733;"/>
+                    </HBox>
+                </HBox>
+                <TableView fx:id="tblDetalles" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colDetCodigo" text="Código" prefWidth="110.0"/>
+                        <TableColumn fx:id="colDetProducto" text="Producto" prefWidth="240.0"/>
+                        <TableColumn fx:id="colDetCantidadSolicitada" text="Solicitado" prefWidth="100.0"/>
+                        <TableColumn fx:id="colDetCantidadRecibida" text="Recibido" prefWidth="100.0"/>
+                        <TableColumn fx:id="colDetCantidadPendiente" text="Pendiente" prefWidth="100.0"/>
+                        <TableColumn fx:id="colDetPrecioUnitario" text="Costo Unitario ($)" prefWidth="130.0"/>
+                        <TableColumn fx:id="colDetSubtotal" text="Subtotal ($)" prefWidth="130.0"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="Seleccione una orden de compra arriba para visualizar sus productos solicitados y saldos." styleClass="table-empty-label"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </VBox>
+
+    <!-- MODAL OVERLAY 1: REGISTRAR NUEVA ORDEN DE COMPRA -->
+    <VBox fx:id="modalNuevaCompra" alignment="CENTER" styleClass="modal-overlay" visible="false">
+        <VBox prefWidth="820.0" maxHeight="620.0" spacing="14.0" styleClass="modal-dialog-card">
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label text="🛒" style="-fx-font-size: 22px; -fx-text-fill: #CA5733;"/>
+                <VBox spacing="2.0">
+                    <Label text="Nueva Orden de Compra" styleClass="form-card-title"/>
+                    <Label text="Registre el pedido a un proveedor. No afecta existencias de inventario hasta su recepción." styleClass="form-card-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblResponsableNuevaCompra" text="Responsable: -" styleClass="role-tag-employee"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Selección de Proveedor -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label text="Proveedor:* " style="-fx-font-weight: bold; -fx-text-fill: #183D53; -fx-min-width: 90px;"/>
+                <ComboBox fx:id="cmbNuevoProveedor" promptText="Seleccione el proveedor distribuidor..." prefWidth="380.0" styleClass="combo-box-custom"/>
+            </HBox>
+
+            <!-- Agregar Producto al Pedido -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #F8FAFC; -fx-padding: 10px 14px; -fx-background-radius: 8px; -fx-border-color: #CBD5E1; -fx-border-radius: 8px;">
+                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                    <Label text="Producto:*" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <ComboBox fx:id="cmbNuevoProducto" promptText="Buscar producto por nombre o código..." prefWidth="320.0" styleClass="combo-box-custom"/>
+                </VBox>
+                <VBox spacing="3.0">
+                    <Label text="Cantidad:*" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <TextField fx:id="txtNuevaCantidad" promptText="Ej. 10" prefWidth="90.0" styleClass="text-input-field"/>
+                </VBox>
+                <VBox spacing="3.0">
+                    <Label text="Costo Unitario ($):*" style="-fx-font-size: 11px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                    <TextField fx:id="txtNuevoCostoUnitario" promptText="Ej. 3500.00" prefWidth="130.0" styleClass="text-input-field"/>
+                </VBox>
+                <VBox alignment="BOTTOM_CENTER">
+                    <Button fx:id="btnAgregarItem" text="➕ Agregar" onAction="#onAgregarItemNuevoPedido" styleClass="btn-primary-compras"/>
+                </VBox>
+            </HBox>
+
+            <!-- Tabla de Ítems a Comprar -->
+            <TableView fx:id="tblNuevoPedidoItems" styleClass="custom-table" prefHeight="220.0" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNuevoCodigo" text="Código" prefWidth="110.0"/>
+                    <TableColumn fx:id="colNuevoProducto" text="Producto" prefWidth="260.0"/>
+                    <TableColumn fx:id="colNuevoCantidad" text="Cantidad" prefWidth="90.0"/>
+                    <TableColumn fx:id="colNuevoCosto" text="Costo Unit. ($)" prefWidth="120.0"/>
+                    <TableColumn fx:id="colNuevoSubtotal" text="Subtotal ($)" prefWidth="120.0"/>
+                </columns>
+                <placeholder>
+                    <Label text="Agregue al menos un producto utilizando el selector superior." styleClass="table-empty-label"/>
+                </placeholder>
+            </TableView>
+
+            <!-- Barra Inferior: Total y Acciones -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Button text="🗑️ Quitar Ítem Seleccionado" onAction="#onQuitarItemNuevoPedido" styleClass="btn-secondary-light"/>
+                <Label fx:id="lblMensajeNuevaCompra" text="" styleClass="form-error-label"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <VBox alignment="CENTER_RIGHT" spacing="2.0">
+                    <Label text="TOTAL DE LA ORDEN:" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #64748B;"/>
+                    <Label fx:id="lblTotalNuevoPedido" text="\$ 0,00" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                </VBox>
+            </HBox>
+
+            <Separator/>
+
+            <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                <Button text="Cancelar" onAction="#onCerrarModalNuevaCompra" styleClass="btn-secondary-light"/>
+                <Button fx:id="btnGuardarNuevaCompra" text="💾 Confirmar y Registrar Orden" onAction="#onGuardarNuevaCompra" styleClass="btn-primary-compras"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+    <!-- MODAL OVERLAY 2: REGISTRAR RECEPCIÓN FÍSICA DE MERCANCÍA -->
+    <VBox fx:id="modalRecepcion" alignment="CENTER" styleClass="modal-overlay" visible="false">
+        <VBox prefWidth="840.0" maxHeight="620.0" spacing="14.0" styleClass="modal-dialog-card">
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label text="📦" style="-fx-font-size: 22px; -fx-text-fill: #087E70;"/>
+                <VBox spacing="2.0">
+                    <Label text="Recepción Física de Mercancía" styleClass="form-card-title"/>
+                    <Label text="Registra el ingreso real de unidades al almacén e incrementa el inventario." styleClass="form-card-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblInfoCompraRecep" text="Orden # - Proveedor" styleClass="role-tag-employee"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Datos de Remisión y Observaciones -->
+            <HBox spacing="14.0">
+                <VBox spacing="3.0" prefWidth="250.0">
+                    <Label text="N° Remisión / Guía / Factura:" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                    <TextField fx:id="txtRecepRemision" promptText="Ej. REM-2026-908" styleClass="text-input-field"/>
+                </VBox>
+                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                    <Label text="Observaciones / Novedades de Entrega:" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                    <TextField fx:id="txtRecepObservaciones" promptText="Ej. Primera entrega parcial recibida por transportadora" styleClass="text-input-field"/>
+                </VBox>
+            </HBox>
+
+            <!-- Tabla de Ítems a Recibir -->
+            <VBox spacing="6.0" VBox.vgrow="ALWAYS">
+                <Label text="Ítems del Pedido (Especifique la cantidad que ingresa hoy para cada producto):"
+                       style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                <TableView fx:id="tblRecepItems" styleClass="custom-table" prefHeight="240.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colRecepCodigo" text="Código" prefWidth="100.0"/>
+                        <TableColumn fx:id="colRecepProducto" text="Producto" prefWidth="240.0"/>
+                        <TableColumn fx:id="colRecepSolicitado" text="Solicitado" prefWidth="90.0"/>
+                        <TableColumn fx:id="colRecepYaRecibido" text="Ya Recibido" prefWidth="95.0"/>
+                        <TableColumn fx:id="colRecepPendiente" text="Pendiente" prefWidth="95.0"/>
+                        <TableColumn fx:id="colRecepAEntregar" text="Ingresa Hoy" prefWidth="120.0"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Mensajes y Botones -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label fx:id="lblMensajeRecepcion" text="" styleClass="form-error-label"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblTotalIngresanHoy" text="Total unidades a ingresar: 0"
+                       style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #087E70;"/>
+            </HBox>
+
+            <Separator/>
+
+            <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                <Button text="Cancelar" onAction="#onCerrarModalRecepcion" styleClass="btn-secondary-light"/>
+                <Button fx:id="btnConfirmarRecepcion" text="📥 Confirmar Entrada al Inventario"
+                        onAction="#onConfirmarRecepcionFisica" styleClass="btn-secondary-recepcion"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+</StackPane>

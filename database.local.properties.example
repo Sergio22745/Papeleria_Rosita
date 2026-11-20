@@ -1,0 +1,13 @@
+# ==============================================================================
+# Plantilla de Configuración Local - Papelería Rosita
+# ==============================================================================
+# Instrucciones:
+# 1. Copie este archivo y renómbrelo como: database.local.properties
+# 2. Ingrese su contraseña de MySQL en la variable 'db.password'.
+# 3. Este archivo está protegido por .gitignore y NO se incluirá en el JAR ni en Git.
+# ==============================================================================
+db.host=localhost
+db.port=3306
+db.name=papeleria_rosita
+db.user=root
+db.password=

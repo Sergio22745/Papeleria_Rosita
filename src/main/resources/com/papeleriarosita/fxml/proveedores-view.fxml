@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="18.0" styleClass="view-container"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.papeleriarosita.controller.ProveedoresController">
+
+    <padding>
+        <Insets bottom="24.0" left="28.0" right="28.0" top="20.0"/>
+    </padding>
+
+    <!-- Encabezado del Módulo (Identidad Dorado Proveedores #A8750C) -->
+    <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="module-header-box">
+        <Label text="🤝" styleClass="module-header-icon, icon-proveedores"/>
+        <VBox spacing="3.0">
+            <Label text="Directorio de Proveedores" styleClass="module-header-title, title-proveedores"/>
+            <Label text="Administración de distribuidores, editoriales y contactos comerciales de abastecimiento"
+                   styleClass="section-desc-text"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblTotalProveedores" text="Total: 0 proveedores" styleClass="header-date-badge"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Barra de Búsqueda y Acciones Rápidas -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="toolbar-box">
+        <TextField fx:id="txtBuscar" promptText="Buscar proveedor por nombre o teléfono..."
+                   prefWidth="320.0" styleClass="text-input-field" onAction="#onBuscar"/>
+        <Button text="🔍 Buscar" onAction="#onBuscar" styleClass="btn-secondary"/>
+        <Button text="✖ Limpiar" onAction="#onLimpiarBusqueda" styleClass="btn-secondary-light"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnNuevo" text="➕ Nuevo Proveedor" onAction="#onNuevoProveedor"
+                styleClass="btn-primary, btn-primary-proveedores"/>
+        <Button fx:id="btnEditar" text="✏️ Editar" onAction="#onEditarProveedor" disable="true"
+                styleClass="btn-secondary"/>
+        <Button text="🔄 Actualizar" onAction="#cargarProveedores" styleClass="btn-secondary-light"/>
+    </HBox>
+
+    <!-- Área Principal: Tabla de Proveedores y Formulario Lateral -->
+    <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+
+        <!-- Tabla de Proveedores -->
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <TableView fx:id="tblProveedores" VBox.vgrow="ALWAYS" styleClass="custom-table">
+                <columns>
+                    <TableColumn fx:id="colId" prefWidth="65.0" text="ID"/>
+                    <TableColumn fx:id="colNombre" prefWidth="240.0" text="Nombre o Razón Social"/>
+                    <TableColumn fx:id="colTelefono" prefWidth="135.0" text="Teléfono"/>
+                    <TableColumn fx:id="colCorreo" prefWidth="180.0" text="Correo Electrónico"/>
+                    <TableColumn fx:id="colDireccion" prefWidth="200.0" text="Dirección"/>
+                </columns>
+                <placeholder>
+                    <Label text="No hay proveedores registrados o no coinciden con la búsqueda."
+                           styleClass="table-empty-label"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+
+        <!-- Formulario Lateral de Registro y Edición -->
+        <VBox fx:id="formCard" prefWidth="380.0" spacing="14.0" styleClass="side-form-card">
+            <VBox spacing="4.0">
+                <Label fx:id="lblTituloFormulario" text="➕ Registrar Proveedor" styleClass="form-card-title"/>
+                <Label text="Ingresa los datos comerciales del distribuidor:" styleClass="form-card-subtitle"/>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Campo 1: Nombre Comercial (Obligatorio) -->
+            <VBox spacing="5.0">
+                <Label text="Nombre o Razón Social *" styleClass="field-label"/>
+                <TextField fx:id="txtNombre" promptText="Ej. Distribuidora Norma S.A.S."
+                           styleClass="text-input-field"/>
+            </VBox>
+
+            <!-- Campo 2: Teléfono -->
+            <VBox spacing="5.0">
+                <Label text="Teléfono de contacto" styleClass="field-label"/>
+                <TextField fx:id="txtTelefono" promptText="Ej. 312 456 7890 o (601) 2345678"
+                           styleClass="text-input-field"/>
+            </VBox>
+
+            <!-- Campo 3: Correo Electrónico -->
+            <VBox spacing="5.0">
+                <Label text="Correo electrónico" styleClass="field-label"/>
+                <TextField fx:id="txtCorreo" promptText="Ej. ventas@editorialnorma.com"
+                           styleClass="text-input-field"/>
+            </VBox>
+
+            <!-- Campo 4: Dirección -->
+            <VBox spacing="5.0">
+                <Label text="Dirección física / despacho" styleClass="field-label"/>
+                <TextArea fx:id="txtDireccion" promptText="Ej. Calle 15 # 24-50, Bogotá D.C."
+                          prefRowCount="3" wrapText="true" styleClass="text-input-field"/>
+            </VBox>
+
+            <!-- Mensaje de estado/validación -->
+            <Label fx:id="lblMensajeFormulario" styleClass="message-label" wrapText="true"
+                   visible="false" managed="false"/>
+
+            <!-- Botones de Acción del Formulario -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button fx:id="btnCancelar" text="✖ Cancelar" onAction="#onCancelarFormulario"
+                        styleClass="btn-secondary-light"/>
+                <Button fx:id="btnGuardar" text="💾 Guardar Proveedor" onAction="#onGuardarProveedor"
+                        styleClass="btn-primary, btn-primary-proveedores"/>
+            </HBox>
+        </VBox>
+
+    </HBox>
+
+</VBox>

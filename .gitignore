@@ -1,0 +1,36 @@
+# ==============================================================================
+# Git Ignore - Papelería Rosita
+# ==============================================================================
+
+# Credenciales y archivos de configuración local (seguridad)
+database.local.properties
+*.local.properties
+.env
+
+# Archivos generados por Maven y compilación
+target/
+*.class
+*.log
+
+# Entornos de desarrollo y editores (IDEs)
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Archivos de respaldo y temporales
+*.respaldo
+*.bak
+*.tmp
+PruebaVentana.java
+PruebaVentana.class
+
+# Archivos del sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Copias de seguridad de bases de datos
+/backup/

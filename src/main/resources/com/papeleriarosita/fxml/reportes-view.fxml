@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="rootStackPane" styleClass="view-container"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.papeleriarosita.controller.ReportesController">
+
+    <VBox spacing="12.0">
+        <padding>
+            <Insets bottom="16.0" left="20.0" right="20.0" top="14.0"/>
+        </padding>
+
+        <!-- Encabezado del Módulo (Identidad Violeta #7951A4) -->
+        <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="module-header-box">
+            <Label text="📊" style="-fx-font-size: 28px; -fx-text-fill: #7951A4;"/>
+            <VBox spacing="2.0">
+                <Label text="Módulo de Reportes y Análisis del Negocio" styleClass="module-header-title" style="-fx-text-fill: #7951A4;"/>
+                <Label text="Estadísticas de ventas, inventario, abastecimiento y flujo de caja en tiempo real para Rosita y Gladys."
+                       styleClass="section-desc-text"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Atajos rápidos de período -->
+            <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                <Button text="📅 Hoy" onAction="#onFiltroHoy" styleClass="btn-secondary-light"/>
+                <Button text="📅 Este Mes" onAction="#onFiltroEsteMes" styleClass="btn-secondary-light"/>
+                <Button text="📅 Año Actual" onAction="#onFiltroAnioActual" styleClass="btn-secondary-light"/>
+                <Button text="🔄 Actualizar Todo" onAction="#onRefrescarTodo" styleClass="btn-primary-reportes"/>
+            </HBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- TabPane Principal de Reportes -->
+        <TabPane fx:id="tabPaneReportes" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="custom-tab-pane">
+
+            <!-- ================================================================ -->
+            <!-- PESTAÑA 1: REPORTES DE VENTAS -->
+            <!-- ================================================================ -->
+            <Tab text="🛍️ Reportes de Ventas">
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="10.0" right="4.0" bottom="6.0" left="4.0"/>
+                    </padding>
+
+                    <!-- Filtros de Ventas -->
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="report-filter-bar">
+                        <Label text="Desde:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="dpVentasDesde" prefWidth="130.0" promptText="dd/mm/aaaa"/>
+                        <Label text="Hasta:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="dpVentasHasta" prefWidth="130.0" promptText="dd/mm/aaaa"/>
+                        <ComboBox fx:id="cmbVentasUsuario" promptText="Todos los usuarios" prefWidth="170.0" styleClass="combo-box-custom"/>
+                        <ComboBox fx:id="cmbVentasMetodo" promptText="Todos los métodos" prefWidth="150.0" styleClass="combo-box-custom"/>
+                        <ComboBox fx:id="cmbVentasCategoria" promptText="Todas las categorías" prefWidth="160.0" styleClass="combo-box-custom"/>
+                        <Button text="🔍 Consultar" onAction="#onConsultarVentas" styleClass="btn-primary-reportes"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📥 Exportar Ventas a CSV" onAction="#onExportarVentasCSV" styleClass="btn-export-csv"/>
+                        <Button text="📥 Exportar Top Productos CSV" onAction="#onExportarTopProductosCSV" styleClass="btn-outline-reportes"/>
+                    </HBox>
+
+                    <!-- Tarjetas KPIs de Ventas -->
+                    <HBox spacing="12.0">
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="TOTAL VENTAS REALIZADAS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiVentasTotalMonto" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #7951A4;"/>
+                            <Label fx:id="lblKpiVentasCantidad" text="0 ventas confirmadas" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="UNIDADES VENDIDAS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiVentasUnidades" text="0 unidades" styleClass="kpi-number" style="-fx-text-fill: #087E70;"/>
+                            <Label text="Artículos entregados a clientes" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="TICKET PROMEDIO" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiVentasTicketPromedio" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #385DB1;"/>
+                            <Label text="Valor promedio por cada venta" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="ESTADO FINANCIERO" styleClass="kpi-title"/>
+                            <Label text="Excluye Anuladas" styleClass="kpi-number" style="-fx-text-fill: #065F46; -fx-font-size: 18px;"/>
+                            <Label text="Garantía de integridad de caja" styleClass="kpi-subtitle"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Gráficos y Tablas de Ventas -->
+                    <SplitPane dividerPositions="0.45" orientation="VERTICAL" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                        <!-- Panel Superior: Gráficos -->
+                        <HBox spacing="10.0">
+                            <!-- Gráfico de Ventas Mensuales -->
+                            <VBox HBox.hgrow="ALWAYS" styleClass="chart-panel-card">
+                                <Label text="📈 Evolución de Ventas Mensuales (Año en Curso)" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                <BarChart fx:id="chartVentasMensuales" legendVisible="false" animated="false" VBox.vgrow="ALWAYS" prefHeight="170.0">
+                                    <xAxis>
+                                        <CategoryAxis label="Mes" fx:id="axisMeses"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Ventas ($)" fx:id="axisVentas"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+
+                            <!-- Gráfico Métodos de Pago -->
+                            <VBox prefWidth="380.0" styleClass="chart-panel-card">
+                                <Label text="💳 Ventas por Método de Pago" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                <PieChart fx:id="chartMetodosPago" legendVisible="true" animated="false" VBox.vgrow="ALWAYS" prefHeight="170.0"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Panel Inferior: Ranking de Productos Más Vendidos y Transacciones -->
+                        <SplitPane dividerPositions="0.5" orientation="HORIZONTAL" style="-fx-background-color: transparent;">
+                            <!-- Ranking de Productos Más Vendidos -->
+                            <VBox spacing="6.0" styleClass="chart-panel-card">
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <Label text="🏆 Ranking de Productos Más Vendidos" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #7951A4;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="Ordenado por cantidad y recaudación" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                                </HBox>
+                                <TableView fx:id="tblTopProductos" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colTopCodigo" text="Código" prefWidth="95.0"/>
+                                        <TableColumn fx:id="colTopNombre" text="Producto" prefWidth="180.0"/>
+                                        <TableColumn fx:id="colTopCategoria" text="Categoría" prefWidth="120.0"/>
+                                        <TableColumn fx:id="colTopCantidad" text="Cant. Vendida" prefWidth="95.0"/>
+                                        <TableColumn fx:id="colTopTotal" text="Total Recaudado ($)" prefWidth="125.0"/>
+                                        <TableColumn fx:id="colTopPrecioProm" text="Precio Promedio ($)" prefWidth="120.0"/>
+                                    </columns>
+                                    <placeholder>
+                                        <Label text="No hay ventas registradas para el período seleccionado." styleClass="table-empty-label"/>
+                                    </placeholder>
+                                </TableView>
+                            </VBox>
+
+                            <!-- Detalle Analítico de Ventas Realizadas -->
+                            <VBox spacing="6.0" styleClass="chart-panel-card">
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <Label text="📋 Registro Detallado de Ventas del Período" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="Excluye ventas anuladas" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                                </HBox>
+                                <TableView fx:id="tblVentasReporte" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colVentaId" text="N°" prefWidth="60.0"/>
+                                        <TableColumn fx:id="colVentaFecha" text="Fecha y Hora" prefWidth="130.0"/>
+                                        <TableColumn fx:id="colVentaUsuario" text="Vendedor" prefWidth="120.0"/>
+                                        <TableColumn fx:id="colVentaMetodo" text="Método" prefWidth="100.0"/>
+                                        <TableColumn fx:id="colVentaArticulos" text="Artículos" prefWidth="75.0"/>
+                                        <TableColumn fx:id="colVentaTotal" text="Total ($)" prefWidth="110.0"/>
+                                    </columns>
+                                    <placeholder>
+                                        <Label text="No hay ventas registradas en este período." styleClass="table-empty-label"/>
+                                    </placeholder>
+                                </TableView>
+                            </VBox>
+                        </SplitPane>
+                    </SplitPane>
+                </VBox>
+            </Tab>
+
+            <!-- ================================================================ -->
+            <!-- PESTAÑA 2: REPORTES DE INVENTARIO -->
+            <!-- ================================================================ -->
+            <Tab text="📦 Reportes de Inventario">
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="10.0" right="4.0" bottom="6.0" left="4.0"/>
+                    </padding>
+
+                    <!-- Filtros de Inventario -->
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="report-filter-bar">
+                        <Label text="Categoría:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="cmbInvCategoria" promptText="Todas las categorías" prefWidth="190.0" styleClass="combo-box-custom"/>
+                        <Label text="Alerta de Stock:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="cmbInvAlerta" promptText="Todos los estados" prefWidth="170.0" styleClass="combo-box-custom"/>
+                        <Button text="🔍 Filtrar Inventario" onAction="#onConsultarInventario" styleClass="btn-primary-reportes"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📥 Exportar Inventario CSV" onAction="#onExportarInventarioCSV" styleClass="btn-export-csv"/>
+                        <Button text="📥 Exportar Kárdex CSV" onAction="#onExportarKardexCSV" styleClass="btn-outline-reportes"/>
+                    </HBox>
+
+                    <!-- Tarjetas KPIs de Inventario -->
+                    <HBox spacing="12.0">
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="VALOR TOTAL DEL INVENTARIO" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiInvValorTotal" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #087E70;"/>
+                            <Label text="Valuación a precio oficial de venta" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="UNIDADES EN EXISTENCIA" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiInvUnidades" text="0 unidades" styleClass="kpi-number" style="-fx-text-fill: #183D53;"/>
+                            <Label fx:id="lblKpiInvTotalProductos" text="0 productos en catálogo" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="DISPONIBLES NORMALES" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiInvDisponibles" text="0" styleClass="kpi-number" style="-fx-text-fill: #2563EB;"/>
+                            <Label text="Stock por encima del mínimo" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="PRODUCTOS STOCK BAJO" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiInvBajoStock" text="0" styleClass="kpi-number" style="-fx-text-fill: #D97706;"/>
+                            <Label text="Requieren pedido de reposición" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="PRODUCTOS AGOTADOS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiInvAgotados" text="0" styleClass="kpi-number" style="-fx-text-fill: #DC2626;"/>
+                            <Label text="Stock cero (sin existencias)" styleClass="kpi-subtitle"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Split Maestro-Detalle: Existencias y Kárdex -->
+                    <SplitPane dividerPositions="0.6" orientation="HORIZONTAL" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                        <!-- Tabla de Inventario y Distribución -->
+                        <VBox spacing="6.0" styleClass="chart-panel-card">
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label text="📋 Existencias Actuales y Alertas de Reposición" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Valores en tiempo real de MySQL" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                            </HBox>
+                            <TableView fx:id="tblInventarioReporte" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colInvCodigo" text="Código" prefWidth="90.0"/>
+                                    <TableColumn fx:id="colInvNombre" text="Producto" prefWidth="200.0"/>
+                                    <TableColumn fx:id="colInvCategoria" text="Categoría" prefWidth="120.0"/>
+                                    <TableColumn fx:id="colInvStockActual" text="Stock Actual" prefWidth="95.0"/>
+                                    <TableColumn fx:id="colInvStockMin" text="Stock Mínimo" prefWidth="95.0"/>
+                                    <TableColumn fx:id="colInvAlerta" text="Alerta" prefWidth="105.0"/>
+                                    <TableColumn fx:id="colInvPrecioVenta" text="Precio Venta ($)" prefWidth="110.0"/>
+                                    <TableColumn fx:id="colInvValorTotal" text="Valor Stock ($)" prefWidth="120.0"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No hay productos coincidentes con los filtros seleccionados." styleClass="table-empty-label"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Panel Lateral: Gráfico de Categorías e Historial Kárdex -->
+                        <VBox spacing="8.0">
+                            <!-- Gráfico de Stock por Categoría -->
+                            <VBox styleClass="chart-panel-card" prefHeight="220.0">
+                                <Label text="🏷️ Unidades en Stock por Categoría" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                <PieChart fx:id="chartStockCategorias" legendVisible="true" animated="false" VBox.vgrow="ALWAYS"/>
+                            </VBox>
+
+                            <!-- Tabla de Kárdex Reciente -->
+                            <VBox spacing="6.0" styleClass="chart-panel-card" VBox.vgrow="ALWAYS">
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <Label text="📜 Últimos Movimientos Kárdex" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="Entradas, salidas y ajustes" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                                </HBox>
+                                <TableView fx:id="tblKardexReporte" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colKardexFecha" text="Fecha" prefWidth="125.0"/>
+                                        <TableColumn fx:id="colKardexProducto" text="Producto" prefWidth="150.0"/>
+                                        <TableColumn fx:id="colKardexTipo" text="Tipo" prefWidth="85.0"/>
+                                        <TableColumn fx:id="colKardexCantidad" text="Cant." prefWidth="65.0"/>
+                                        <TableColumn fx:id="colKardexMotivo" text="Motivo" prefWidth="140.0"/>
+                                    </columns>
+                                    <placeholder>
+                                        <Label text="No hay movimientos registrados en el kárdex." styleClass="table-empty-label"/>
+                                    </placeholder>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                    </SplitPane>
+                </VBox>
+            </Tab>
+
+            <!-- ================================================================ -->
+            <!-- PESTAÑA 3: REPORTES DE COMPRAS Y ABASTECIMIENTO -->
+            <!-- ================================================================ -->
+            <Tab text="🚚 Reportes de Compras">
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="10.0" right="4.0" bottom="6.0" left="4.0"/>
+                    </padding>
+
+                    <!-- Filtros de Compras -->
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="report-filter-bar">
+                        <Label text="Desde:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="dpComprasDesde" prefWidth="130.0" promptText="dd/mm/aaaa"/>
+                        <Label text="Hasta:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="dpComprasHasta" prefWidth="130.0" promptText="dd/mm/aaaa"/>
+                        <ComboBox fx:id="cmbComprasProveedor" promptText="Todos los proveedores" prefWidth="190.0" styleClass="combo-box-custom"/>
+                        <ComboBox fx:id="cmbComprasEstado" promptText="Todos los estados" prefWidth="160.0" styleClass="combo-box-custom"/>
+                        <Button text="🔍 Consultar Compras" onAction="#onConsultarCompras" styleClass="btn-primary-reportes"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📥 Exportar Compras a CSV" onAction="#onExportarComprasCSV" styleClass="btn-export-csv"/>
+                    </HBox>
+
+                    <!-- Tarjetas KPIs de Compras -->
+                    <HBox spacing="12.0">
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="INVERSIÓN TOTAL EN COMPRAS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiComprasTotalMonto" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #CA5733;"/>
+                            <Label fx:id="lblKpiComprasTotalOrdenes" text="0 órdenes de compra" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="COMPRAS COMPLETADAS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiComprasRecibidas" text="0 recibidas" styleClass="kpi-number" style="-fx-text-fill: #087E70;"/>
+                            <Label fx:id="lblKpiComprasParciales" text="0 entregas parciales" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="UNIDADES SOLICITADAS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiComprasUnidadesSolicitadas" text="0 unidades" styleClass="kpi-number" style="-fx-text-fill: #385DB1;"/>
+                            <Label text="Pedidos colocados a proveedores" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="UNIDADES PENDIENTES" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiComprasUnidadesPendientes" text="0 pendientes" styleClass="kpi-number" style="-fx-text-fill: #D97706;"/>
+                            <Label text="Mercancía aún no recibida" styleClass="kpi-subtitle"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Split: Gráfico de Compras por Proveedor y Tabla -->
+                    <SplitPane dividerPositions="0.4" orientation="HORIZONTAL" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                        <!-- Gráfico Compras por Proveedor -->
+                        <VBox styleClass="chart-panel-card">
+                            <Label text="🏭 Compras por Proveedor (Top Inversión)" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                            <PieChart fx:id="chartComprasProveedores" legendVisible="true" animated="false" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+
+                        <!-- Tabla de Historial de Compras -->
+                        <VBox spacing="6.0" styleClass="chart-panel-card">
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label text="📋 Historial de Órdenes de Compra del Período" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Identifica pedidos y estados" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                            </HBox>
+                            <TableView fx:id="tblComprasReporte" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colCompraId" text="N°" prefWidth="65.0"/>
+                                    <TableColumn fx:id="colCompraFecha" text="Fecha Pedido" prefWidth="130.0"/>
+                                    <TableColumn fx:id="colCompraProveedor" text="Proveedor" prefWidth="180.0"/>
+                                    <TableColumn fx:id="colCompraUsuario" text="Registrado Por" prefWidth="130.0"/>
+                                    <TableColumn fx:id="colCompraEstado" text="Estado" prefWidth="110.0"/>
+                                    <TableColumn fx:id="colCompraTotal" text="Total Invertido ($)" prefWidth="130.0"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No hay compras registradas en este período." styleClass="table-empty-label"/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                    </SplitPane>
+                </VBox>
+            </Tab>
+
+            <!-- ================================================================ -->
+            <!-- PESTAÑA 4: RESUMEN ANALÍTICO DE CAJA -->
+            <!-- ================================================================ -->
+            <Tab text="💵 Reportes de Flujo de Caja">
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="10.0" right="4.0" bottom="6.0" left="4.0"/>
+                    </padding>
+
+                    <!-- Filtros de Caja -->
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="report-filter-bar">
+                        <Label text="Desde:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="dpCajaDesde" prefWidth="130.0" promptText="dd/mm/aaaa"/>
+                        <Label text="Hasta:" style="-fx-font-size: 12px; -fx-text-fill: #64748B; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="dpCajaHasta" prefWidth="130.0" promptText="dd/mm/aaaa"/>
+                        <ComboBox fx:id="cmbCajaUsuario" promptText="Todos los usuarios" prefWidth="180.0" styleClass="combo-box-custom"/>
+                        <Button text="🔍 Consultar Caja" onAction="#onConsultarCaja" styleClass="btn-primary-reportes"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📥 Exportar Arqueo a CSV" onAction="#onExportarCajaCSV" styleClass="btn-export-csv"/>
+                    </HBox>
+
+                    <!-- Tarjetas KPIs de Caja -->
+                    <HBox spacing="12.0">
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="TOTAL RECAUDADO EN EL PERÍODO" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiCajaTotalRecaudado" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #183D53;"/>
+                            <Label fx:id="lblKpiCajaTransacciones" text="0 transacciones válidas" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="EFECTIVO EN CAJA" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiCajaEfectivo" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #087E70;"/>
+                            <Label text="Dinero físico recaudado" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="TRANSFERENCIAS" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiCajaTransferencia" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #385DB1;"/>
+                            <Label text="Bancolombia, Nequi, Daviplata" styleClass="kpi-subtitle"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="kpi-card, kpi-card-total">
+                            <Label text="PAGOS CON TARJETA" styleClass="kpi-title"/>
+                            <Label fx:id="lblKpiCajaTarjeta" text="\$ 0,00" styleClass="kpi-number" style="-fx-text-fill: #A8750C;"/>
+                            <Label text="Datáfono / Redeban" styleClass="kpi-subtitle"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Tabla de Transacciones de Caja -->
+                    <VBox spacing="6.0" styleClass="chart-panel-card" VBox.vgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="📋 Detalle de Transacciones del Arqueo de Caja" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #183D53;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="Excluye ventas anuladas" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                        </HBox>
+                        <TableView fx:id="tblCajaReporte" styleClass="custom-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colCajaId" text="N° Venta" prefWidth="85.0"/>
+                                <TableColumn fx:id="colCajaFecha" text="Fecha y Hora" prefWidth="140.0"/>
+                                <TableColumn fx:id="colCajaUsuario" text="Responsable (Cajera)" prefWidth="160.0"/>
+                                <TableColumn fx:id="colCajaCliente" text="Cliente" prefWidth="180.0"/>
+                                <TableColumn fx:id="colCajaMetodo" text="Método de Pago" prefWidth="140.0"/>
+                                <TableColumn fx:id="colCajaTotal" text="Total Cobrado ($)" prefWidth="140.0"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="No hay movimientos de caja para los criterios seleccionados." styleClass="table-empty-label"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </VBox>
+</StackPane>
